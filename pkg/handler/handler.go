@@ -162,6 +162,16 @@ func addEnvToContainer(container *corev1.Container, mountPath, tokenFilePath, vo
 		})
 	}
 
+	// Configure pod with its own name to transmit to IAM
+	env = append(env, corev1.EnvVar{
+		Name:  "AWS_ROLE_SESSION_NAME",
+		ValueFrom: &corev1.EnvVarSource{
+			FieldRef: &corev1.ObjectFieldSelector{
+				FieldPath: "metadata.name",
+			},
+		},
+	})
+
 	container.Env = env
 	container.VolumeMounts = append(
 		container.VolumeMounts,
